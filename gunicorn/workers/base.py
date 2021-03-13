@@ -143,6 +143,7 @@ class Worker(object):
 
     def load_wsgi(self):
         try:
+            print(f"load_wsgi")
             self.wsgi = self.app.wsgi()
         except SyntaxError as e:
             if not self.cfg.reload:

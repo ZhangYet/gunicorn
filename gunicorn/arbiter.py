@@ -239,6 +239,7 @@ class Arbiter(object):
 
     def handle_chld(self, sig, frame):
         "SIGCHLD handling"
+        print(f"{self.pid} handle_chld")
         self.reap_workers()
         self.wakeup()
 
@@ -333,6 +334,7 @@ class Arbiter(object):
         """
         try:
             os.write(self.PIPE[1], b'.')
+            print(f"{self.pid}: PIPE[1] {self.PIPE[1]}")
         except IOError as e:
             if e.errno not in [errno.EAGAIN, errno.EINTR]:
                 raise
@@ -357,6 +359,7 @@ class Arbiter(object):
             ready = select.select([self.PIPE[0]], [], [], 1.0)
             if not ready[0]:
                 return
+            print(f"{self.pid} sleep: {ready}")
             while os.read(self.PIPE[0], 1):
                 pass
         except (select.error, OSError) as e:
@@ -511,6 +514,7 @@ class Arbiter(object):
         try:
             while True:
                 wpid, status = os.waitpid(-1, os.WNOHANG)
+                print(f"{self.pid} waitpid result: {wpid}, {status}, {self.reexec_pid}")
                 if not wpid:
                     break
                 if self.reexec_pid == wpid:
@@ -566,6 +570,7 @@ class Arbiter(object):
 
     def spawn_worker(self):
         self.worker_age += 1
+        print(f"self.worker_class: {self.worker_class.__name__}")
         worker = self.worker_class(self.worker_age, self.pid, self.LISTENERS,
                                    self.app, self.timeout / 2.0,
                                    self.cfg, self.log)

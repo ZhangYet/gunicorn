@@ -69,11 +69,13 @@ class GeventWorker(AsyncWorker):
                     "wsgi.multithread": True,
                     "SERVER_SOFTWARE": VERSION,
                 })
+                print(f"set server: {self.handle.__qualname__}")
                 server = self.server_class(
                     s, application=self.wsgi, spawn=pool, log=self.log,
                     handler_class=self.wsgi_handler, environ=environ,
                     **ssl_args)
             else:
+                print(f"set stream server: {self.handle.__qualname__}")
                 hfun = partial(self.handle, s)
                 server = StreamServer(s, handle=hfun, spawn=pool, **ssl_args)
                 if self.cfg.workers > 1:
@@ -120,9 +122,11 @@ class GeventWorker(AsyncWorker):
         # Connected socket timeout defaults to socket.getdefaulttimeout().
         # This forces to blocking mode.
         client.setblocking(1)
+        print(f"GeventWorker.handle: {client}")
         super().handle(listener, client, addr)
 
     def handle_request(self, listener_name, req, sock, addr):
+        print(f"{self.pid} worker is handling request: listener_name {listener_name}, req {req}, sock {sock}, addr {addr}")
         try:
             super().handle_request(listener_name, req, sock, addr)
         except gevent.GreenletExit:

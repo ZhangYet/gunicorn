@@ -155,6 +155,7 @@ class EventletWorker(AsyncWorker):
             gsock = GreenSocket(sock)
             gsock.setblocking(1)
             hfun = partial(self.handle, gsock)
+            print(f"set acceptor: {self.handle.__qualname__}")
             acceptor = eventlet.spawn(_eventlet_serve, gsock, hfun,
                                       self.worker_connections)
 
