@@ -72,6 +72,7 @@ class Worker(object):
         once every ``self.timeout`` seconds. If you fail in accomplishing
         this task, the master process will murder your workers.
         """
+        print(f'{self.pid} worker.notify()')
         self.tmp.notify()
 
     def run(self):
@@ -112,6 +113,7 @@ class Worker(object):
         util.close_on_exec(self.tmp.fileno())
 
         self.wait_fds = self.sockets + [self.PIPE[0]]
+        print(f'init_process {self.pid}: {self.wait_fds}, {self.sockets}')
 
         self.log.close_on_exec()
 

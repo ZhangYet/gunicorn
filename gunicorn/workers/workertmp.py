@@ -16,11 +16,13 @@ IS_CYGWIN = PLATFORM.startswith('CYGWIN')
 class WorkerTmp(object):
 
     def __init__(self, cfg):
-        old_umask = os.umask(cfg.umask)
+        old_umask = os.umask(cfg.umask) # 查看 TLPI 15.4.6
         fdir = cfg.worker_tmp_dir
+        print(f'cfg.worker_tmp_dir: {fdir}, cfg.umask: {cfg.umask}, old_umask: {old_umask}')
         if fdir and not os.path.isdir(fdir):
             raise RuntimeError("%s doesn't exist. Can't create workertmp." % fdir)
         fd, name = tempfile.mkstemp(prefix="wgunicorn-", dir=fdir)
+        print(f'tempfile: {fd}, {name}')
         os.umask(old_umask)
 
         # change the owner and group of the file if the worker will run as
