@@ -72,7 +72,7 @@ class Worker(object):
         once every ``self.timeout`` seconds. If you fail in accomplishing
         this task, the master process will murder your workers.
         """
-        print(f'{self.pid} worker.notify()')
+        # print(f'{self.pid} worker.notify()')
         self.tmp.notify()
 
     def run(self):
